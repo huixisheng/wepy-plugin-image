@@ -1,0 +1,24 @@
+# EditorConfig is awesome: <a onclick="javascript:pageTracker._trackPageview('/outgoing/EditorConfig.org');" href="http://EditorConfig.org">http://EditorConfig.org</a>
+
+# https://github.com/Jocs/EditorConfig_guideline
+# http://blog.csdn.net/echo_follow_heart/article/details/48314523
+# https://github.com/cssmagic/blog/issues/22
+
+
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = false
+trim_trailing_whitespace = true
+charset = utf-8
+
+# Matches multiple files with brace expansion notation
+# Set default charset
+[*.{js,html,css,json}]
+
+tab_width = 2
+indent_style = space
+indent_size = 2

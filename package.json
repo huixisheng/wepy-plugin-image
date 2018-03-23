@@ -1,0 +1,65 @@
+{
+  "name": "wepy-plugin-image",
+  "version": "0.0.1",
+  "description": "wepy插件根据图片大小是否转base64、上传七牛",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "npm run eslint && ./node_modules/mocha/bin/mocha --require babel-register --watch  --timeout 30000",
+    "eslint:diff": "node_modules/eslint/bin/eslint.js $(git diff-index HEAD --name-only --diff-filter ACMR |grep '\\.\\(jsx\\|es6\\|js\\|vue\\)$')",
+    "eslint": "cross-env NODE_ENV=production node_modules/eslint/bin/eslint.js --max-warnings 10 --ext .js,.vue static src build config test fis-conf.js",
+    "build:dev": "cross-env NODE_ENV=development webpack --progress --hide-modules --colors",
+    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules --colors",
+    "preinstall": "git config --local commit.template ./.gitmessage",
+    "commitmsg": "commitlint -e $GIT_PARAMS"
+  },
+  "keywords": [],
+  "author": "huixisheng@gmail.com",
+  "license": "MIT",
+  "dependencies": {},
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run eslint"
+    }
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^6.1.3",
+    "@commitlint/config-angular": "^6.1.3",
+    "@x-scaffold/webpack-config": "*",
+    "autoprefixer": "^8.1.0",
+    "babel-core": "^6.0.0",
+    "babel-eslint": "^8.2.2",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-transform-runtime": "^6.22.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-2": "^6.22.0",
+    "babel-register": "^6.26.0",
+    "chai": "^4.1.2",
+    "clean-webpack-plugin": "^0.1.19",
+    "compression-webpack-plugin": "^1.1.10",
+    "cross-env": "^5.0.5",
+    "eslint": "^4.18.2",
+    "eslint-config-style-guide": "0.0.6",
+    "eslint-friendly-formatter": "^3.0.0",
+    "eslint-import-resolver-webpack": "^0.8.4",
+    "eslint-loader": "^2.0.0",
+    "file-loader": "^1.1.11",
+    "husky": "^0.15.0-rc.13",
+    "mocha": "^5.0.4",
+    "node-plus-string": "^1.0.1",
+    "stylefmt": "^6.0.0",
+    "stylelint": "^9.1.1",
+    "stylelint-config-standard": "^18.2.0",
+    "stylelint-config-style-guide": "0.0.3",
+    "stylelint-processor-html": "^1.0.0",
+    "stylelint-webpack-plugin": "^0.10.3",
+    "vue-loader": "^14.2.1",
+    "vue-template-compiler": "^2.4.4",
+    "webpack": "^3.8.1",
+    "webpack-stats-plugin": "^0.2.1",
+    "x-config-deploy": "^0.0.3"
+  },
+  "engines": {
+    "node": ">= 4.0.0",
+    "npm": ">= 3.0.0"
+  }
+}

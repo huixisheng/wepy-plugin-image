@@ -1,0 +1,28 @@
+
+# <type类型>(<scope提交代码影响范围>): <subject主题，概括提交的内容>
+#
+# <body>用于详细描述本次变更的内容
+#
+# <footer>提供解决问题的文章地址或者测试的链接地址
+# 例如: closes #traup_id fix #traup_id  http://test.h5.cosmeapp.net/group/thread/250411
+#
+# <type类型>
+#    build: 构建工具生成资源
+#    feat: 新功能
+#    fix : 修补bug
+#    docs: 文档
+#    style: 不影响代码含义的变化（空白，格式化，缺少分号等）
+#    refactor: 代码更改，既不修复错误也不添加功能
+#    test: 添加缺失测试或更正现有测试
+#    perf: 改进性能的代码更改
+#    chore: 构建过程或辅助工具的变动（范围：gulp，webpack，npm）
+#    ci: 更改我们的持续集成文件和脚本（范围：Jenkins Travis）
+#
+# <scope提交代码影响范围。如果存在多个用、分割>
+#    ops、h5、(api|apiApp)、mhome、library、config(配置修改)、scripts、b2b、shop、apiClock、apiDocs、
+#
+# https://segmentfault.com/a/1190000004282514
+# https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#-git-commit-guidelines
+# https://www.phodal.com/blog/how-to-write-a-better-git-commit-message/
+#
+#

@@ -18,6 +18,7 @@ const cleanPlugin = new CleanWebpackPlugin(['dist'], {
 });
 
 module.exports = {
+  target: 'node',
   entry: {
     index: './src/index.js',
   },

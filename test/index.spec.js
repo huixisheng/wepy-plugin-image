@@ -1,6 +1,7 @@
 const ImageParse = require('../src/index');
 const { expect } = require('chai');
 
+// TODO添加测试用例
 describe('正则匹配', function () {
   it('1 加 1 应该等于 2', function () {
     const instance = new ImageParse();

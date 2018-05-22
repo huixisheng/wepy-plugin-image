@@ -1,7 +1,9 @@
 const path = require('path');
 const fs = require('fs');
 const mime = require('mime');
+// TODO key 没有配置的提示
 const packQiniu = require('pack-qiniu');
+const validator = require('validator');
 
 class ImageParse {
   constructor(cfg = {}) {
@@ -27,18 +29,24 @@ class ImageParse {
       const uploadList = [];
       bgPaths.forEach((item) => {
         const bgImage = item.replace('url(', '').replace(/\)$/g, '');
-        const bgPath = path.join(path.dirname(file.replace('dist', 'src')), bgImage);
-        const stats = fs.statSync(bgPath);
-        if (stats.size > config.limit) {
-          uploadList.push({
-            path: bgPath,
-            bg: bgImage,
-          });
-        } else {
-          base64List.push({
-            path: bgPath,
-            bg: bgImage,
-          });
+        if (!validator.isURL(bgImage)) {
+          const bgPath = path.join(path.dirname(file.replace('dist', 'src')), bgImage);
+          const stats = fs.statSync(bgPath);
+          if (fs.existsSync(bgPath)) {
+            if (stats.size > config.limit) {
+              uploadList.push({
+                path: bgPath,
+                bg: bgImage,
+              });
+            } else {
+              base64List.push({
+                path: bgPath,
+                bg: bgImage,
+              });
+            }
+          } else {
+            console.error('%s不存在', bgPath);
+          }
         }
       });
       base64List.forEach((base64file) => {

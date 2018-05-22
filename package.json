@@ -1,6 +1,6 @@
 {
   "name": "wepy-plugin-image",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "wepy插件根据图片大小是否转base64、上传七牛",
   "main": "src/index.js",
   "scripts": {
@@ -9,7 +9,6 @@
     "eslint": "cross-env NODE_ENV=production node_modules/eslint/bin/eslint.js --max-warnings 10 --ext .js,.vue static src build config test fis-conf.js",
     "build:dev": "cross-env NODE_ENV=development webpack --progress --hide-modules --colors",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules --colors",
-    "preinstall": "git config --local commit.template ./.gitmessage",
     "commitmsg": "commitlint -e $GIT_PARAMS"
   },
   "keywords": [],
@@ -18,7 +17,8 @@
   "dependencies": {
     "babel-preset-es2015": "^6.24.1",
     "mime": "^2.2.0",
-    "pack-qiniu": "^1.0.1"
+    "pack-qiniu": "^1.0.1",
+    "validator": "^10.2.0"
   },
   "husky": {
     "hooks": {

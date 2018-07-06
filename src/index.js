@@ -7,29 +7,40 @@ const validator = require('validator');
 
 class ImageParse {
   constructor(cfg = {}) {
+    // TODO filter
     this.config = Object.assign({
       limit: 1024,
+      debugMode: false,
     }, cfg);
   }
 
   apply(op) {
     const { code, file } = op;
     const config = this.config;
-    console.log(file);
+    const { debugMode } = config;
+    if (debugMode) {
+      console.log('wepy-plugin-image file', file);
+    }
 
     const reg = /url\((.*?)\)/gi;
     if (!code) {
-      console.error('code is null');
+      if (debugMode) {
+        console.error('code is null');
+      }
       op.next();
     } else {
       const bgPaths = code.match(reg) || [];
-      console.log('bgPaths', bgPaths);
+      if (debugMode) {
+        console.log('wepy-plugin-image bgPaths', bgPaths);
+      }
 
       const base64List = [];
       const uploadList = [];
       bgPaths.forEach((item) => {
-        const bgImage = item.replace('url(', '').replace(/\)$/g, '');
+        const bgImage = item.replace(/'/g, '').replace(/"/g, '').replace('url(', '').replace(/\)$/g, '');
+        // TODO 本身是base64, 绝对地址的图片
         if (!validator.isURL(bgImage)) {
+          // 图片做忽略，不做拷贝，取的是src的图片
           const bgPath = path.join(path.dirname(file.replace('dist', 'src')), bgImage);
           const stats = fs.statSync(bgPath);
           if (fs.existsSync(bgPath)) {
@@ -45,7 +56,9 @@ class ImageParse {
               });
             }
           } else {
-            console.error('%s不存在', bgPath);
+            if (debugMode) {
+              console.error('%s不存在', bgPath);
+            }
           }
         }
       });
@@ -60,6 +73,14 @@ class ImageParse {
       uploadList.forEach((uploadfile) => {
         promiseUploadList.push(packQiniu(uploadfile.path, uploadfile));
       });
+      // 无图片的时候
+      if (!promiseUploadList.length) {
+        if (debugMode) {
+          console.log('wepy-plugin-image no upload image');
+        }
+        op.next();
+        return;
+      }
       Promise.all(promiseUploadList).then((resultList) => {
         resultList.forEach((item) => {
           const bgUrl = item.options.bg;

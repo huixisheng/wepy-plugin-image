@@ -1,6 +1,6 @@
 # wepy-plugin-image
 
-> wepy插件根据图片大小是否转base64、上传七牛
+> wepy插件根据图片大小转base64或者上传七牛
 
 ## 配置 ##
 
@@ -10,12 +10,13 @@
 
 ```
 module.exports.plugins = {
-    image: {
-      limit: 10240, // 大于10kb
-    },
+  image: {
+    debugMode, // 用于显示调试显示
+    limit: 10240, // 大于10kb
+  },
 }
 ```
 
 ## TODO  ##
-- [ ] 测试用例
-- [ ] 去除脚手架生成的webpack?
+- [x] 测试用例
+- [x] 去除脚手架生成的webpack

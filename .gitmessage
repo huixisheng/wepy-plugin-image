@@ -4,7 +4,7 @@
 # <body>用于详细描述本次变更的内容
 #
 # <footer>提供解决问题的文章地址或者测试的链接地址
-# 例如: closes #traup_id fix #traup_id
+# 例如: closes #id fix #id
 #
 # <type类型>
 #    build: 构建工具生成资源

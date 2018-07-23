@@ -17,9 +17,10 @@ class ImageParse {
   apply(op) {
     const { code, file } = op;
     const config = this.config;
-    const { debugMode } = config;
+    const { debugMode, lessRootpath } = config;
     if (debugMode) {
-      console.log('wepy-plugin-image file', file);
+      console.log('\nwepy-plugin-image file:', file);
+      console.log('lessRootpath', lessRootpath);
     }
 
     const reg = /url\((.*?)\)/gi;
@@ -31,37 +32,49 @@ class ImageParse {
     } else {
       const bgPaths = code.match(reg) || [];
       if (debugMode) {
-        console.log('wepy-plugin-image bgPaths', bgPaths);
+        console.log('wepy-plugin-image bgPaths:\n', bgPaths);
       }
 
       const base64List = [];
       const uploadList = [];
       bgPaths.forEach((item) => {
         const bgImage = item.replace(/'/g, '').replace(/"/g, '').replace('url(', '').replace(/\)$/g, '');
-        // TODO 本身是base64, 绝对地址的图片
-        if (!validator.isURL(bgImage)) {
-          // 图片做忽略，不做拷贝，取的是src的图片
-          const bgPath = path.join(path.dirname(file.replace('dist', 'src')), bgImage);
+        // 本身是绝对地址
+        let bgPath = bgImage;
+
+        // 绝对地址不存在，使用去除lessRootpath地址的相对地址
+        if (!fs.existsSync(bgPath)) {
+          bgPath = path.join(path.dirname(file.replace('dist', 'src')), bgImage.replace(lessRootpath, ''));
+        }
+
+        // less使用e('')传递的路径
+        if (!fs.existsSync(bgPath)) {
+          bgPath = path.join(path.dirname(file.replace('dist', 'src')), bgImage);
+        }
+
+        if (debugMode) {
+          console.log('bgPath:', bgPath);
+        }
+
+        if (!fs.existsSync(bgPath) && debugMode) {
+          console.error('%s不存在', bgPath);
+        }
+        if (!validator.isURL(bgImage) && fs.existsSync(bgPath)) {
           const stats = fs.statSync(bgPath);
-          if (fs.existsSync(bgPath)) {
-            if (stats.size > config.limit) {
-              uploadList.push({
-                path: bgPath,
-                bg: bgImage,
-              });
-            } else {
-              base64List.push({
-                path: bgPath,
-                bg: bgImage,
-              });
-            }
+          if (stats.size > config.limit) {
+            uploadList.push({
+              path: bgPath,
+              bg: bgImage,
+            });
           } else {
-            if (debugMode) {
-              console.error('%s不存在', bgPath);
-            }
+            base64List.push({
+              path: bgPath,
+              bg: bgImage,
+            });
           }
         }
       });
+
       base64List.forEach((base64file) => {
         const base64Content = fs.readFileSync(base64file.path).toString('base64');
         const mimeType = mime.getType(base64file.path);

@@ -1,6 +1,6 @@
 {
   "name": "wepy-plugin-image",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "wepy插件根据图片大小转base64或者上传七牛",
   "main": "src/index.js",
   "scripts": {

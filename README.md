@@ -1,10 +1,26 @@
 # wepy-plugin-image
 
-> wepy插件根据图片大小转base64或者上传七牛
+> 支持wepy2插件根据图片大小转base64或者上传七牛
 
 ## 配置 ##
 
 [pack-qiniu配置](https://github.com/huixisheng/pack-qiniu)
+
+## 0.1.x
+> 支持wepy2.x
+
+```
+const wepyPluginImage = require('wepy-plugin-image');
+
+// `wepy.config.js`
+module.exports = {
+  plugins: [
+    wepyPluginImage,
+  ],
+```
+
+## 0.0.x
+> 支持`wepy1.7.x`
 
 `wepy.config.js`
 

@@ -1,4 +1,4 @@
-const path = require('path');
+// const path = require('path');
 const fs = require('fs');
 const mime = require('mime');
 // TODO key 没有配置的提示
@@ -44,7 +44,7 @@ class ImageParse {
     bgPaths.forEach((item) => {
       const bgImage = item.replace(/'/g, '').replace(/"/g, '').replace('url(', '').replace(/\)$/g, '');
       // 本身是绝对地址
-      let bgPath = bgImage;
+      const bgPath = bgImage;
 
       // 绝对地址不存在，使用去除lessRootpath地址的相对地址
       // if (!fs.existsSync(bgPath)) {
@@ -52,9 +52,9 @@ class ImageParse {
       // }
 
       // less使用e('')传递的路径
-      if (!fs.existsSync(bgPath)) {
-        bgPath = path.join(path.dirname(file.replace('dist', 'src')), bgImage);
-      }
+      // if (!fs.existsSync(bgPath)) {
+      //   bgPath = path.join(path.dirname(file.replace('dist', 'src')), bgImage);
+      // }
 
       if (debugMode) {
         console.log('bgPath:', bgPath);
@@ -63,7 +63,7 @@ class ImageParse {
       if (!fs.existsSync(bgPath) && debugMode) {
         console.error('%s不存在', bgPath);
       }
-      if (!validator.isURL(bgImage) && fs.existsSync(bgPath)) {
+      if (!validator.isURL(bgImage, { require_protocol: true }) && fs.existsSync(bgPath)) {
         const stats = fs.statSync(bgPath);
         if (stats.size > config.limit) {
           uploadList.push({
@@ -76,6 +76,8 @@ class ImageParse {
             bg: bgImage,
           });
         }
+      } else {
+        console.error('%路径格式不正确', bgPath);
       }
     });
 
@@ -124,49 +126,50 @@ class ImageParse {
 
 // eslint-disable-next-line
 exports = module.exports = function (options = {}) {
-  this.register('before-wepy-parser-style', ({ node, ctx }) => {
-    if (options.debugMode) {
-      console.log('before-wepy-parser-style', ctx.file);
-    }
+  return function () {
+    this.register('before-wepy-parser-style', ({ node, ctx }) => {
+      if (options.debugMode) {
+        console.log('before-wepy-parser-style', ctx.file);
+      }
 
-    const wepyPluginImageInstance = new ImageParse(options);
-    return wepyPluginImageInstance.apply(node, ctx);
-
-    // node
-    //   { type: 'style',
-    //   content: '\n.groupitem {\n}\n',
-    //   start: 19,
-    //   attrs: { type: 'less' },
-    //   end: 35,
-    //   lang: 'css',
-    //   compiled: { code: '\n.groupitem {\n}\n' } }
-
-    // ctx
-    // { file: '/Users/huixisheng/Mzxd/mxj-fe/wepy2-mall/src/components/groupitem.wpy',
-    //   sfc:
-    //    { template:
-    //       { type: 'template',
-    //         content: '\n<div class="groupitem">\n  --<span class="id">{{gitem.childid}}.</span>\n  <span class="name" @tap="tap"> {{gitem.childname}}</span>\n</div>\n',
-    //         start: 54,
-    //         attrs: {},
-    //         end: 201,
-    //         lang: 'wxml',
-    //         compiled: [Object],
-    //         parsed: [Object] },
-    //      script:
-    //       { type: 'script',
-    //         content: '//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n\nimport wepy from \'@wepy/core\';\n\nwepy.component({\n  props: {\n    gitem: {}\n  },\n  data: {\n  },\n  methods: {\n    tap () {\n      this.gitem.childname = `Child Random(${Math.random()})`\n      let index = this.$parent.$children.indexOf(this);\n      console.log(`Item ${index}, ID is ${this.gitem.childid}`)\n    }\n  }\n});\n',
-    //         start: 221,
-    //         attrs: {},
-    //         end: 568,
-    //         lang: 'babel',
-    //         compiled: [Object],
-    //         parsed: [Object] },
-    //      styles: [ [Object] ],
-    //      customBlocks: [],
-    //      config: { parsed: [Object] } },
-    //   type: 'normal',
-    //   npm: false,
-    //   component: true }
-  });
+      const wepyPluginImageInstance = new ImageParse(options);
+      return wepyPluginImageInstance.apply(node, ctx);
+    });
+  };
 };
+// node
+//   { type: 'style',
+//   content: '\n.groupitem {\n}\n',
+//   start: 19,
+//   attrs: { type: 'less' },
+//   end: 35,
+//   lang: 'css',
+//   compiled: { code: '\n.groupitem {\n}\n' } }
+
+// ctx
+// { file: '/Users/huixisheng/Mzxd/mxj-fe/wepy2-mall/src/components/groupitem.wpy',
+//   sfc:
+//    { template:
+//       { type: 'template',
+//         content: '\n<div class="groupitem">\n  --<span class="id">{{gitem.childid}}.</span>\n  <span class="name" @tap="tap"> {{gitem.childname}}</span>\n</div>\n',
+//         start: 54,
+//         attrs: {},
+//         end: 201,
+//         lang: 'wxml',
+//         compiled: [Object],
+//         parsed: [Object] },
+//      script:
+//       { type: 'script',
+//         content: '//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n\nimport wepy from \'@wepy/core\';\n\nwepy.component({\n  props: {\n    gitem: {}\n  },\n  data: {\n  },\n  methods: {\n    tap () {\n      this.gitem.childname = `Child Random(${Math.random()})`\n      let index = this.$parent.$children.indexOf(this);\n      console.log(`Item ${index}, ID is ${this.gitem.childid}`)\n    }\n  }\n});\n',
+//         start: 221,
+//         attrs: {},
+//         end: 568,
+//         lang: 'babel',
+//         compiled: [Object],
+//         parsed: [Object] },
+//      styles: [ [Object] ],
+//      customBlocks: [],
+//      config: { parsed: [Object] } },
+//   type: 'normal',
+//   npm: false,
+//   component: true }

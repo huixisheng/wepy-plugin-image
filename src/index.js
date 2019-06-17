@@ -1,4 +1,4 @@
-// const path = require('path');
+const path = require('path');
 const fs = require('fs');
 const mime = require('mime');
 // TODO key 没有配置的提示
@@ -11,6 +11,8 @@ class ImageParse {
     // TODO filter
     this.config = Object.assign({
       limit: 1024,
+      // TODO: 兼容wepy --log trace
+      // https://github.com/npm/npmlog/blob/master/log.js#L296-L304
       debugMode: false,
     }, cfg);
   }
@@ -35,21 +37,28 @@ class ImageParse {
       return Promise.resolve({ node, ctx });
     }
     const bgPaths = code.match(reg) || [];
-    if (debugMode) {
-      console.log('wepy-plugin-image bgPaths:\n', bgPaths);
-    }
+
 
     const base64List = [];
     const uploadList = [];
-    bgPaths.forEach((item) => {
+    const bgPathFilter = bgPaths.filter(item => item.indexOf('data:image/svg+xml') < 0 && item.indexOf('http') !== 0);
+    if (debugMode) {
+      console.log('wepy-plugin-image bgPaths:\n', bgPathFilter);
+    }
+    bgPathFilter.forEach((item) => {
       const bgImage = item.replace(/'/g, '').replace(/"/g, '').replace('url(', '').replace(/\)$/g, '');
       // 本身是绝对地址
-      const bgPath = bgImage;
+      let bgPath = bgImage;
+
+      if (debugMode) {
+        console.log('bgPathSouce:%s\n', bgPath);
+      }
 
       // 绝对地址不存在，使用去除lessRootpath地址的相对地址
-      // if (!fs.existsSync(bgPath)) {
-      //   bgPath = path.join(path.dirname(file.replace('dist', 'src')), bgImage.replace(lessRootpath, ''));
-      // }
+      // fix: http的链接不处理
+      if (!fs.existsSync(bgPath) && bgPath.indexOf('http') !== 0) {
+        bgPath = path.join(path.dirname(file), bgPath);
+      }
 
       // less使用e('')传递的路径
       // if (!fs.existsSync(bgPath)) {
@@ -57,12 +66,15 @@ class ImageParse {
       // }
 
       if (debugMode) {
-        console.log('bgPath:', bgPath);
+        console.log('bgPathChange:%s\n', bgPath);
       }
 
       if (!fs.existsSync(bgPath) && debugMode) {
-        console.error('%s不存在', bgPath);
+        if (bgPath.indexOf('http') < 0) {
+          console.error('%s不存在', bgPath);
+        }
       }
+      // TODO: https:// 开头的字体
       if (!validator.isURL(bgImage, { require_protocol: true }) && fs.existsSync(bgPath)) {
         const stats = fs.statSync(bgPath);
         if (stats.size > config.limit) {
@@ -77,7 +89,9 @@ class ImageParse {
           });
         }
       } else {
-        console.error('%路径格式不正确', bgPath);
+        if (bgPath.indexOf('http') < 0) {
+          console.error('不正确的路径', bgPath);
+        }
       }
     });
 
